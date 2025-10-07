@@ -1,0 +1,75 @@
+package com.example.calculator;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+import android.util.Log;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TextView textViewDisplay;
+    private String currentInput = "";
+    private double operand1 = 0;
+    private String operator = "";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main); 
+        textViewDisplay = findViewById(R.id.textViewDisplay);  //
+
+        if (textViewDisplay == null) {
+            Log.e("ERROR", "textViewDisplay is null! Check your layout XML!");
+        }
+
+        updateDisplay();
+    }
+
+    private void updateDisplay() {
+        if (textViewDisplay != null) {
+            textViewDisplay.setText(currentInput.isEmpty() ? "0" : currentInput);
+        }
+    }
+
+    public void onNumberClick(View view) {
+        currentInput += view.getTag().toString();
+        updateDisplay();
+    }
+
+    public void onOperatorClick(View view) {
+        if (!currentInput.isEmpty()) {
+            operand1 = Double.parseDouble(currentInput);
+            operator = view.getTag().toString();
+            currentInput = "";
+            updateDisplay();
+        }
+    }
+
+    public void onEqualClick(View view) {
+        if (!currentInput.isEmpty() && !operator.isEmpty()) {
+            double operand2 = Double.parseDouble(currentInput);
+            double result = performOperation(operand1, operand2, operator);
+            currentInput = String.valueOf(result);
+            operator = "";
+            updateDisplay();
+        }
+    }
+
+    public void onClearClick(View view) {
+        currentInput = "";
+        operand1 = 0;
+        operator = "";
+        updateDisplay();
+    }
+
+    private double performOperation(double operand1, double operand2, String operator) {
+        switch (operator) {
+            case "+": return operand1 + operand2;
+            case "-": return operand1 - operand2;
+            case "*": return operand1 * operand2;
+            case "/": return operand2 != 0 ? operand1 / operand2 : Double.NaN;
+            default: return 0;
+        }
+    }
+}
